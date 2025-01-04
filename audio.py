@@ -102,6 +102,5 @@ class AudioProcessor:
 if __name__ == "__main__":
 
    audio = AudioProcessor()
-   audio.read_hertz()
    audio.record()
    audio.play_audio()

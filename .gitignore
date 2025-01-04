@@ -1,0 +1,42 @@
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment directories
+venv/
+env/
+ENV/
+.venv/
+.virtualenv/
+venv-audio/
+
+# Cache files
+*.egg
+*.egg-info/
+.eggs/
+*.manifest
+*.spec
+
+# Distribution/build directories
+build/
+dist/
+wheels/
+*.whl
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# IDE/Editor specific files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Test-related files
+.pytest_cache/
+.cover

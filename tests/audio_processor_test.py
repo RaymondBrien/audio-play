@@ -1,7 +1,5 @@
 import pytest
 import numpy as np
-import sounddevice as sd
-import matplotlib.pyplot as plt
 
 from audio_processor import AudioProcessor
 from unittest.mock import patch
@@ -34,11 +32,25 @@ def test_audio_processor_instantiation():
     audio_processor = AudioProcessor()
     assert audio_processor
 
-def test_audio_processor_record_method():
+def test_record_method(mocker):
+    """Test record method of AudioProcessor class"""
+
+    # arrange
+    mock_audio_data = np.random.rand(48000, 1)  # simulate 1 second of audio data
+
+    mocker.patch('sounddevice.rec', return_value=mock_audio_data)
+    mocker.patch('sounddevice.wait')  # mock wait call
+
     audio_processor = AudioProcessor()
 
+    # act
+    result = audio_processor.record()
 
-
+    # assert
+    assert isinstance(result, np.ndarray), "Expected a NumPy array"
+    # confirm data expected dimensions
+    assert result.shape == mock_audio_data.shape, "Expected same shape as mock data"
+    np.testing.assert_array_equal(result, mock_audio_data), "Expected same data in mock data and result data"
 
 
 """

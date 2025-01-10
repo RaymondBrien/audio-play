@@ -52,6 +52,21 @@ def test_record_method(mocker):
     assert result.shape == mock_audio_data.shape, "Expected same shape as mock data"
     np.testing.assert_array_equal(result, mock_audio_data), "Expected same data in mock data and result data"
 
+def test_play_audio_method_when_nothing_recorded(mocker):
+    """
+    Test play_audio method's two main conditions:
+    1. when no audio is recorded, exception is raised
+    2. when audio is not None, no exception is raised, recorded audio is played
+    """
+
+    # arrange
+    audio_processor = AudioProcessor()
+    mocker.patch.object(audio_processor, 'recorded_audio', None)
+
+    # act and assert
+    with pytest.raises(Exception):
+        audio_processor.play_audio()  # expect exception (None value)
+
 
 """
 Integration Testing:

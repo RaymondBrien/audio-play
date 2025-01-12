@@ -38,19 +38,18 @@ class AudioProcessor:
 
 
     def record(self) -> np.array:
-        """Record audio from the user microphone and
-        plot the FFT dominant frequency"""
+        """Record audio from the user microphone"""
 
-        # read the hertz from the user microphone
         print(f"Recording for {TEST_DURATION} seconds...")
         self.recorded_audio = sd.rec(int(TEST_DURATION * default_sample_rate))
-        sd.wait()
+
+        sd.wait()  # wait until recording is finished before continuing
         print("Done recording...")
 
         return self.recorded_audio
 
 
-    def play_audio(self) -> None:
+    def play_audio(self) -> np.array:
         """Play self.recorded_audio"""
 
         input("Press Enter to play the recorded audio...")

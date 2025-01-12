@@ -2,7 +2,6 @@ import pytest
 import numpy as np
 
 from audio_processor import AudioProcessor
-from unittest.mock import patch
 
 """
 - Unit tests for audio_processor.py
@@ -52,11 +51,10 @@ def test_record_method(mocker):
     assert result.shape == mock_audio_data.shape, "Expected same shape as mock data"
     np.testing.assert_array_equal(result, mock_audio_data), "Expected same data in mock data and result data"
 
-def test_play_audio_method_when_nothing_recorded(mocker):
+def test_play_audio_no_audio(mocker):
     """
-    Test play_audio method's two main conditions:
-    1. when no audio is recorded, exception is raised
-    2. when audio is not None, no exception is raised, recorded audio is played
+    Test play_audio method when no audio is recorded.
+    Assert that an exception is raised.
     """
 
     # arrange
@@ -67,6 +65,28 @@ def test_play_audio_method_when_nothing_recorded(mocker):
     with pytest.raises(Exception):
         audio_processor.play_audio()  # expect exception (None value)
 
+def test_play_audio_with_audio(mocker):
+    """
+    Test play_audio method when audio is recorded.
+    Assert that the audio is played.
+    """
+
+    # arrange
+    # mock recorded audio data
+    audio_processor = AudioProcessor()
+    mock_audio_data = np.random.rand(48000, 1)
+    mocker.patch.object(audio_processor, 'recorded_audio', mock_audio_data)
+    # mock play method process
+    mock_play = mocker.patch('sounddevice.play')
+    mocker.patch('builtins.input', return_value="")
+    mocker.patch('sounddevice.wait')
+
+    # act
+    audio_processor.play_audio()
+
+    # assert
+    assert mock_audio_data is not None, "Expected audio data"
+    mock_play.assert_called_once_with(mock_audio_data, samplerate=48000)
 
 """
 Integration Testing:

@@ -25,7 +25,6 @@ Test behavior first, then worry about inner workings:
 """
 @pytest.fixture
 def create_audio_processor():
-    print("setup_module")
 
     try:
         audio_processor = AudioProcessor()

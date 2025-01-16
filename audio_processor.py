@@ -70,6 +70,9 @@ class AudioProcessor:
         - flatten recorded_audio (np.array)
         - calculate the dominant frequency using FFT
         """
+        if self.recorded_audio is None:
+            print("No audio recorded yet. Please record audio first.")
+            pass
 
         # flatten audio array
         audio = self.recorded_audio.flatten()

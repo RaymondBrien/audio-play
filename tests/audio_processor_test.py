@@ -23,15 +23,18 @@ Test behavior first, then worry about inner workings:
 
 
 """
+@pytest.fixture
+def create_audio_processor():
+    print("setup_module")
 
-def test_audio_processor_exists():
-    assert AudioProcessor
+    try:
+        audio_processor = AudioProcessor()
+        print("audio_processor instantiated")
+        yield audio_processor
+    except Exception as e:
+        print(e)
 
-def test_audio_processor_instantiation():
-    audio_processor = AudioProcessor()
-    assert audio_processor
-
-def test_record_method(mocker):
+def test_record_method(mocker, create_audio_processor):
     """Test record method of AudioProcessor class"""
 
     # arrange
@@ -40,10 +43,8 @@ def test_record_method(mocker):
     mocker.patch('sounddevice.rec', return_value=mock_audio_data)
     mocker.patch('sounddevice.wait')  # mock wait call
 
-    audio_processor = AudioProcessor()
-
     # act
-    result = audio_processor.record()
+    result = create_audio_processor.record()
 
     # assert
     assert isinstance(result, np.ndarray), "Expected a NumPy array"

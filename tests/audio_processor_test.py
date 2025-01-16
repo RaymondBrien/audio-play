@@ -88,6 +88,28 @@ def test_play_audio_with_audio(mocker):
     assert mock_audio_data is not None, "Expected audio data"
     mock_play.assert_called_once_with(mock_audio_data, samplerate=48000)
 
+
+def test_determine_dominant_pitch_in_hertz():
+    """
+    - test with predefined numpy array or series of attributes (numpy and non using fixtures)
+    - calculate the dominant pitch in hertz
+    - find frequency bins, and one with highest amplitude
+    - returns correct
+
+    How to test:
+    - when no audio recorded, gracefully handled?
+    - FTT calculation should match expected values from mock data
+
+    """
+
+    audio_processor = AudioProcessor()
+    audio_processor.recorded_audio = None
+
+    # act
+    # TODO confirm doesn't stop other functions working - think of use case in broader scheme
+    with pytest.raises(AttributeError):
+        audio_processor.determine_dominant_pitch_in_hertz(), "No audio recorded yet. Please record audio first."
+
 """
 Integration Testing:
 Test the workflow of recording audio, determining dominant pitch,

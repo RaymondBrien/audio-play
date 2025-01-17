@@ -24,7 +24,7 @@ Test behavior first, then worry about inner workings:
 
 """
 
-class unit_testing():
+class Test_Audio_Processor_Class():
     @pytest.fixture(autouse=True)
     def setup_class(self):
         try:

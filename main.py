@@ -1,11 +1,23 @@
 import sounddevice as sd
-import numpy as np
+import argparse
 import queue
+import numpy as np
 import matplotlib.pyplot as plt
+
 from scipy.signal import find_peaks
+from typing import Any, Callable
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument(
+    '-q', '--buffersize', type=int, default=20,
+    help='number of blocks used for buffering (default: %(default)s)')
+args = parser.parse_args()
+print(f'Args: {args}')
+if args.buffersize < 1:
+    parser.error('buffersize must be at least 1')
 
 # Queue to send data from callback stream to main thread
-q = queue.Queue()
+q = queue.Queue(maxsize=args.buffersize)
 
 # helper function to plot a stream of audio data
 def pitch_detection(audio_data, sample_rate):
@@ -18,11 +30,22 @@ def pitch_detection(audio_data, sample_rate):
         return dom_freq
     return None
 
-def callback(indata, outdata, frames, time, status):  # TODO sort params
+def callback(outdata, frames, time, status):  # TODO sort params
     """Callback function which receives live audio data"""
+    assert frames
+
+    assert not status
     if status:
         print(status)
-    q.put(indata[:, 0])
+    q.put(outdata[:, 0])
+    try:
+
+        data = q.get()
+        print(f'Got data in queue: {data}')
+
+    except queue.Empty or status.output_underflow:
+        print('Output underflow: increase blocksize?')
+        raise sd.CallbackAbort
 
 
 def plot_pitch():
@@ -46,6 +69,6 @@ def plot_pitch():
                 ax.set_ylabel("Frequency (Hz)")
                 plt.pause(0.01)
 
-stream = sd.InputStream(callback=callback, samplerate=44100, channels=2)
+stream = sd.InputStream(callback=callback, samplerate=44100, channels=1)
 with stream:
     plot_pitch()

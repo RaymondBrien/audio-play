@@ -2,6 +2,7 @@ import sounddevice as sd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
+from typing import Optional, ClassVar
 
 # _________________________________________________________________
 # default params
@@ -47,6 +48,9 @@ class AudioProcessor:
         self.playing = False
         self.recorded_audio = None
         self.recording_duration = TEST_DURATION
+
+    def __name__(self) -> str:
+        return "AudioProcessor"
 
 
     def test_record(self) -> np.array:
@@ -120,8 +124,4 @@ class AudioProcessor:
         plt.title("Loudest Frequency was {:.2f} Hz".format(loudest_freq))
         plt.show()
 
-if __name__ == "__main__":
 
-   audio = AudioProcessor()
-   audio.record()
-   audio.play_audio()

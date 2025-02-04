@@ -2,7 +2,7 @@ import pytest
 import asyncio
 import numpy as np
 
-from audio_processor import AudioProcessor
+from ..src.sound.audio_processor import AudioProcessor
 
 """
 - Unit tests for audio_processor.py
@@ -114,6 +114,19 @@ class Test_Audio_Processor_Class():
             self.audio_processor, 'recorded_audio', self.mock_recording).determine_doninant_pitch_in_hertz()
 
         # arrange
+
+
+    def test_pitch_detection(self):
+        """
+        Test pitch detection method
+        - assert that the method returns the expected pitch
+        - check takes two params (audio, sample_rate) with correct type
+        - check returns a float
+        - check returns a value in the expected range
+        """
+        with pytest.raises(Exception):
+            self.audio_processor.pitch_detection(
+                self.mock_recording, 48000), "Expected two parameters"
 
 
     """

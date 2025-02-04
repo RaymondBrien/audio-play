@@ -1,6 +1,7 @@
 import sounddevice as sd
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.signal import find_peaks
 
 # _________________________________________________________________
 # default params
@@ -10,6 +11,17 @@ default_sample_rate = sd.default.samplerate = 48000
 
 TEST_DURATION = 1.0  # seconds
 # _________________________________________________________________
+
+# helper function to plot a stream of audio data
+def pitch_detection(audio_data, sample_rate):
+    """Find dominant frequency in audio data stream using FFT"""
+    fft_spectrum = np.abs(np.fft.rfft(audio_data))
+    freqs = np.fft.rfftfreq(len(audio_data), d=1/sample_rate)  # frequency bins
+    peak_indices, _ = find_peaks(fft_spectrum, height=0.1)  # find peaks
+    if len(peak_indices) > 0:
+        dom_freq = freqs[peak_indices[np.argmax(fft_spectrum[peak_indices])]] # dominant frequency
+        return dom_freq
+    return None
 
 class AudioProcessor:
     """
@@ -37,9 +49,10 @@ class AudioProcessor:
         self.recording_duration = TEST_DURATION
 
 
-    def record(self) -> np.array:
+    def test_record(self) -> np.array:
         """Record audio from the user microphone"""
 
+        self.recording = True
         print(f"Recording for {TEST_DURATION} seconds...")
         self.recorded_audio = sd.rec(int(TEST_DURATION * default_sample_rate))
 
@@ -49,7 +62,7 @@ class AudioProcessor:
         return self.recorded_audio
 
 
-    def play_audio(self) -> np.array:
+    def play_test_recording(self) -> np.array:
         """Play self.recorded_audio"""
 
         input("Press Enter to play the recorded audio...")
@@ -63,7 +76,7 @@ class AudioProcessor:
         sd.wait()
 
 
-    def determine_dominant_pitch_in_hertz(self):
+    def show_dom_pitch(self):
         """
         Plot dominant frequency of the recorded audio:
 
@@ -89,7 +102,7 @@ class AudioProcessor:
         return dom_freq, fft_freqs, loudest_freq
 
 
-    def plot_audio(self, dom_freq, fft_freqs, loudest_freq):
+    def plot_recorded_dom_pitch(self, dom_freq, fft_freqs, loudest_freq):
         """
         Plot the recorded audio
 
@@ -106,7 +119,6 @@ class AudioProcessor:
         plt.ylabel("Amplitude")
         plt.title("Loudest Frequency was {:.2f} Hz".format(loudest_freq))
         plt.show()
-
 
 if __name__ == "__main__":
 

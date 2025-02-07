@@ -1,7 +1,7 @@
 import sounddevice as sd
 import numpy as np
 
-class DefaultSetup:
+class DefaultSetupAudio:
     """
     Base class for default values
     """

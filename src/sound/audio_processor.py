@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 from typing import Optional, ClassVar
 
+from src.sound.utils.DefaultSetupAudio import DefaultSetupAudio
+
 # _________________________________________________________________
 # default params
 # run python3 -m sounddevice for available devices
@@ -24,7 +26,7 @@ def pitch_detection(audio_data, sample_rate):
         return dom_freq
     return None
 
-class AudioProcessor:
+class AudioProcessor(DefaultSetupAudio):
     """
     AudioProcessor class to record audio from the user microphone and
     plot the FFT dominant frequency.
@@ -44,7 +46,7 @@ class AudioProcessor:
     """
 
     def __init__(self) -> None:
-        self.recording = False
+        self.recording = DefaultSetupAudio.recording_active
         self.playing = False
         self.recorded_audio = None
         self.recording_duration = TEST_DURATION
@@ -74,7 +76,7 @@ class AudioProcessor:
         print("Playing your recorded audio...")
         if self.recorded_audio is None:
             print("No audio recorded yet. Please record audio first.")
-            return
+            yield
 
         sd.play(self.recorded_audio, samplerate=default_sample_rate)
         sd.wait()
@@ -110,10 +112,9 @@ class AudioProcessor:
         """
         Plot the recorded audio
 
-        Arguments:
-        fft_freqs -- array of frequency bins
-        dom_freq -- FFT result
-        loudest_freq -- the loudest frequency in Hz
+        :param: fft_freqs -- array of frequency bins
+        :param: dom_freq -- FFT result
+        :param: loudest_freq -- the loudest frequency in Hz
         """
 
         # plot result

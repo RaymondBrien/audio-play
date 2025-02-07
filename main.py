@@ -21,7 +21,7 @@ if args.buffersize < 1:
 q = queue.Queue(maxsize=args.buffersize)
 
 # helper function to plot a stream of audio data
-def pitch_detection(audio_data, sample_rate):
+def pitch_detection(audio_data: np.array, sample_rate: int):
     """Find dominant frequency in audio data stream using FFT"""
     fft_spectrum = np.abs(np.fft.rfft(audio_data))
     freqs = np.fft.rfftfreq(len(audio_data), d=1/sample_rate)  # frequency bins

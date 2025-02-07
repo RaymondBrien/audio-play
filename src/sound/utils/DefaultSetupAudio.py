@@ -1,58 +1,45 @@
-import sounddevice as sd
+import attr
+import logging
 import numpy as np
+import sounddevice as sd
+from typing import Optional
 
+@attr.s(auto_attribs=True)
 class DefaultSetupAudio:
     """
-    Base class for default values
+    Base class for default values.
     """
+    python_version: float = 3.10
+    sd_version: str = attr.ib(default=sd.__version__)
+    cores: int = 1
+    available_devices: dict = {}
 
-    def __init__(self):
-        """Initial setup of default values"""
-        self.python.version = 3.10
-        self.sd.version = sd.__version__
+    running_test: bool = False
+    test_recording_duration: float = 5.0
 
-        self.cores : int = 1
-        self.available_devices = None
+    recording_active: bool = False
+    recorded_audio: list = []
+    recording_duration: float = 5.0
+    default_samplerate: int = 44100
+    default_channels: int = 1
 
-        # manual test params
-        self.running_test : bool = False
-        self.test_duration : float = 5.0
+    playing: bool = False
+    duration: float = 5.0
+    multi_threading: bool = False
 
-        # recording params
-        self.recording : bool = False
-        self.recorded_audio : np.array = None
-        self.recording_duration : float = 5.0
+    input_device = None
+    output_device = None
+    blocksize: int = 0
 
-        self.default_samplerate = sd.default.samplerate = 44100
-        self.default_channels = sd.default.channels = 1
+    user_toggle: bool = False # Avoid using input() here
+    gui : bool = False
+    gui_visible: bool = False
+    plot: bool = False
+    gui_active: bool = False
+    stream: bool = False
+    pitch_detection_running: bool = False
 
-        self.playing : bool = False
-        self.duration : float = 5.0
-
-        self.test_recording_duration : float = 5.0
-
-        self.multi_threading : bool = False
-        self.input_device : bool = None
-        self.output_device : bool = None
-
-        self.blocksize : int = 0
-        self.dtype = np.int64
-
-        # visuals
-        self.input = input()
-        self.gui_visible : bool = False
-        self.gui : bool = None
-        self.plot : bool = False
-        self.gui_active : bool = False
-
-        # stream
-        self.stream = None
-
-        # audio processor
-        self.pitch_detection_running : bool = False
-
-        # reset
-        self.reset = False
+    reset: bool = False
 
     def __name__(self) -> str:
         return str(self.__name__)
@@ -63,4 +50,17 @@ class DefaultSetupAudio:
     def get_available_devices(self) -> dict:
         """Get available input/output devices"""
         self.available_devices = sd.query_devices()
-        return self.available_devices
+        return dict(self.available_devices)
+
+# Dynamically generate and set the docstring
+def generate_doc(cls):
+    """
+    Generate a docstring for the class based on its attributes.
+    """
+    doc = cls.__doc__ or ""
+    doc += "\n\nAttributes:\n"
+    for attribute in attr.fields(cls):
+        doc += f"    {attribute.name} ({attribute.type.__name__}): {attribute.default}\n"  # noqa
+    return doc
+
+DefaultSetupAudio.__doc__ = generate_doc(DefaultSetupAudio)

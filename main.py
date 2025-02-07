@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 from typing import Any, Callable
 
+# handle buffersize default argument
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument(
     '-q', '--buffersize', type=int, default=20,

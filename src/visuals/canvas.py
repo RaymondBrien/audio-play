@@ -1,3 +1,4 @@
+import pprint
 import attr
 import numpy as np
 import matplotlib.pyplot as plt
@@ -19,7 +20,7 @@ class Canvas(DefaultSetupVisual, Color):
         - ensure there are no transparency issues so colors can always sit on top of canvas clearly
     """
 
-    # map default settings from base class DefaultSetupVisual
+    # Map default canvas settings for internal handling
     canvas_settings = {
         'canvas_enabled' : DefaultSetupVisual.canvas,
         'transparency' : DefaultSetupVisual.canvas_transparency,
@@ -29,37 +30,53 @@ class Canvas(DefaultSetupVisual, Color):
         'base_color' : DefaultSetupVisual.canvas_base_color,
     }
 
+
+    # Ensure default (not visible) settings initialised each time
     def __init__(self):
         super().__init__()
         # Initialise all settings from canvas settings dictionary
         for key, value in self.canvas_settings.items():
             setattr(self, key, value)
 
-    def enable(self):
+
+    def enable(self) -> bool:
         """
-        Function to make the canvas visible and enable animation
+        Update default settings of Canvas instance to enable and display
+        the canvas
+
+        :return: True if canvas instance settings updated successfully
         """
         self.canvas_settings.update({
             'canvas_enabled': True,
             'transparency': 0.0,
             'animation_enabled': True
         })
-        # Update canvas settings to enable and make visible
+
+        # Update canvas instance dict
         for key, value in self.canvas_settings.items():
             setattr(self, key, value)
 
-        while DefaultSetupVisual.canvas:
-            try:
-                canvas = Canvas()
-                canvas.set_canvas()
-                canvas.make_visible()
-                canvas.clear()
+        # Error handling
+        if not all([
+            self.canvas_settings['canvas_enabled'],
+            self.canvas_settings['transparency'] == 0.0,
+            self.canvas_settings['animation_enabled']
+        ]):
+            error_text = ("Canvas could not be created...\n"
+                        "Would you like to continue without the canvas?\n"
+                        "(Y / N): ")
+            user_confirm = input(error_text)
+            if user_confirm.lower() not in ['y', 'yes']:
+                raise RuntimeError(
+                    "Canvas could not be enabled correctly:\n"
+                    "--------Current settings are: --------\n"
+                    f"Canvas enabled: {self.canvas_settings['canvas_enabled']}\n"
+                    f"Transparency: {self.canvas_settings['transparency']}\n"
+                    f"Animation enabled: {self.canvas_settings['animation_enabled']}"
+                )
 
-            except (AssertionError, KeyError) as e:
-                error_text = 'Canvas could not be created...\n' \
-                                'Would you like to continue without the canvas?'
-                user_confirm = input(error_text)
-                raise (e, user_confirm)
+        return True
+
 
     def reset(self):
         """

@@ -18,7 +18,7 @@ class DefaultSetupAudio:
     test_recording_duration: float = 5.0
 
     recording_active: bool = False
-    recorded_audio: list = []
+    recorded_audio: Optional[np.array] = None
     recording_duration: float = 5.0
     default_samplerate: int = 44100
     default_channels: int = 1
@@ -27,8 +27,8 @@ class DefaultSetupAudio:
     duration: float = 5.0
     multi_threading: bool = False
 
-    input_device = None
-    output_device = None
+    input_device : Optional[str] = None
+    output_device : Optional[str] = None
     blocksize: int = 0
 
     user_toggle: bool = False # Avoid using input() here
@@ -50,7 +50,7 @@ class DefaultSetupAudio:
     def get_available_devices(self) -> dict:
         """Get available input/output devices"""
         self.available_devices = sd.query_devices()
-        return dict(self.available_devices)
+        return self.available_devices
 
 # Dynamically generate and set the docstring
 def generate_doc(cls):

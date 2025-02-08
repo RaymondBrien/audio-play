@@ -1,4 +1,3 @@
-import pprint
 import attr
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,10 +11,15 @@ class Canvas(DefaultSetupVisual, Color):
     A simple class to create a canvas to display the visualizations on
 
     TODO:
-    - how will the default values be updated?
     - can this handle a stream of data?
+    - display stream of data on canvas with plot
+    - add reset function to clear canvas
+    - how often should canvas update?
+    - test to ensure once stream finished, canvas remains, can be saved, doesn't crash
+    - test load of stream data to canvas
     - add error handling for invalid input to prevent program from crashing
     (skip if invalid)?
+    - ensure canvas colors display correctly
     - ensure canvas always at bottom of stack (have a stack on top of a base later?
         - ensure there are no transparency issues so colors can always sit on top of canvas clearly
     """

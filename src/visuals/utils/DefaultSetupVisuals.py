@@ -18,7 +18,7 @@ class DefaultSetupVisual:
    canvas_width : int = 800
    canvas_height : int = 600
    canvas_base_color : str = 'black'
-   canvas_transparency : float = 0.0
+   canvas_transparency : float = 1.0
 
    # freq2hex
    freq2hex : bool = False

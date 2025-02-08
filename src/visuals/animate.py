@@ -1,6 +1,6 @@
 from typing import Optional
 
-from .Color import Color
+from src.visuals.utils.Color import Color
 
 class Animate(Color):
     """

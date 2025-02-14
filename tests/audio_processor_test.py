@@ -2,7 +2,7 @@ import pytest
 import asyncio
 import numpy as np
 
-from ..src.sound.audio_processor import AudioProcessor
+from src.sound.audio_processor import AudioProcessor
 
 """
 - Unit tests for audio_processor.py
@@ -38,35 +38,34 @@ class Test_Audio_Processor_Class():
             # add teardown code here if required TODO
 
         except Exception as e:
-            print(e)
+            print(e.__class__)
 
 
     def test_record_method(self, mocker):
         """Test record method of AudioProcessor class"""
 
-        mocker.patch('sounddevice.rec', return_value=self.mock_recording)
-        mocker.patch('sounddevice.wait')  # mock wait call
+        with (
+            mocker.patch('sounddevice.rec', return_value=self.mock_recording),
+            mocker.patch('sounddevice.wait')  # mock wait call
+        ):
+            # act
+            result = self.audio_processor.record()
 
-        # act
-        result = self.audio_processor.record()
+            # assert
+            assert isinstance(result, np.ndarray), "Expected a NumPy array"
+            # confirm data expected dimensions
+            assert result.shape == self.mock_recording.shape, "Expected same shape as mock data"
+            np.testing.assert_array_equal(result, self.mock_recording), "Expected same data in mock data and result data"
 
-        # assert
-        assert isinstance(result, np.ndarray), "Expected a NumPy array"
-        # confirm data expected dimensions
-        assert result.shape == self.mock_recording.shape, "Expected same shape as mock data"
-        np.testing.assert_array_equal(result, self.mock_recording), "Expected same data in mock data and result data"
 
     def test_play_audio_no_audio(self, mocker):
         """
         Test play_audio method when no audio is recorded.
         Assert that an exception is raised.
         """
-
-        # arrange
-        mocker.patch.object(self.audio_processor, 'recorded_audio', None)
-
         # act and assert
         with pytest.raises(Exception):
+            mocker.patch.object(self.audio_processor, 'recorded_audio', None)
             self.audio_processor.play_audio()  # expect exception (None value)
 
 
@@ -77,18 +76,18 @@ class Test_Audio_Processor_Class():
         """
 
         # arrange
-        mocker.patch.object(self.audio_processor, 'recorded_audio', self.mock_recording)
-        # mock play method process
-        mock_play = mocker.patch('sounddevice.play')
-        mocker.patch('builtins.input', return_value="")
-        mocker.patch('sounddevice.wait')
+        with (
+            mocker.patch.object(self.audio_processor, 'recorded_audio', self.mock_recording),
+            mocker.patch('sounddevice.play') as mock_play,
+            mocker.patch('builtins.input', return_value=""),
+            mocker.patch('sounddevice.wait')
+        ):
+            # act
+            self.audio_processor.play_audio()
 
-        # act
-        self.audio_processor.play_audio()
-
-        # assert
-        assert self.mock_recording is not None, "Expected audio data"
-        mock_play.assert_called_once_with(self.mock_recording, samplerate=48000)
+            # assert
+            assert self.mock_recording is not None, "Expected audio data"
+            mock_play.assert_called_once_with(self.mock_recording, samplerate=48000)
 
 
     def test_determine_dominant_pitch_no_audio(self):
@@ -110,11 +109,13 @@ class Test_Audio_Processor_Class():
         - calculate the dominant frequency using FFT
         - FTT calculation should match expected values from mock data
         """
-        mocker.patch(
+        with (
+            mocker.patch(
             self.audio_processor, 'recorded_audio', self.mock_recording).determine_doninant_pitch_in_hertz()
-
-        # arrange
-
+        ):
+            # TODO
+            # arrange
+            print('I am empty')
 
     def test_pitch_detection(self):
         """

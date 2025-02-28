@@ -8,23 +8,32 @@ class AudioStream(Stream):
 
     # default values
     def __init__(self):
-        self.channels = 2  # stereo
-        self.samplerate = 41000
-        self.blocksize = 0  # flexible and variable for optimal performance
-        self.dtype = np.int64  # TODO check if this is the right dtype
+
+        # Initialise parent stream class
+        super().__init(
+            channels = 2
+            samplerate = 41000
+            blocksize = 0
+            dtype= np.int64
+            callback = self.callback
+        )
+
+        self.active = False
 
     def start(self) -> bool:
-        self.stream.start()
+        super().start()
         self.active = True
         print("Stream started")
+        return True
 
     def stop(self) -> bool:
-        self.stream.stop()
+        super().stop()
         self.active = False
         print("Stream stopped")
+        return True
 
 
-    def callback(indata, outdata, frames, time, status):  # TODO sort params
+    def callback(self, indata, outdata, frames, time, status):  # TODO sort params
         """Callback function which receives live audio data"""
         if status:
             print(status)

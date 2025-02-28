@@ -9,17 +9,17 @@ class AudioStream(Stream):
     # default values
     def __init__(self):
         self.active = False
-        self.channels = 1  # mono by default
+        self.channels = 2  # stereo
         self.samplerate = 41000
-        self.blocksize = 0  # default blocksize flexible to load
+        self.blocksize =0  # flexible and variable for optimal performance
         self.dtype = np.int64  # TODO check if this is the right dtype
 
-    def start(self):
+    def start(self) -> bool:
         self.stream.start()
         self.active = True
         print("Stream started")
 
-    def stop(self):
+    def stop(self) -> bool:
         self.stream.stop()
         self.active = False
         print("Stream stopped")

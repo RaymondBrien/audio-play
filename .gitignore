@@ -42,3 +42,5 @@ wheels/
 .pytest_cache/
 .cover
 .mypy_cache/
+
+examples/*

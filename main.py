@@ -7,6 +7,12 @@ import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 from typing import Any, Callable
 
+from src.sound.stream import Stream
+from src.sound import audio_processor
+from src.sound.utils import *
+
+# from visuals import *
+
 # handle buffersize default argument
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument(

@@ -1,4 +1,5 @@
 from sounddevice import Stream
+from typing import Optional
 import numpy as np
 
 class AudioStream(Stream):
@@ -10,15 +11,14 @@ class AudioStream(Stream):
     def __init__(self):
 
         # Initialise parent stream class
-        super().__init(
-            channels = 2
-            samplerate = 41000
-            blocksize = 0
-            dtype= np.int64
-            callback = self.callback
-        )
+        super().__init__(
+            channels = 1,
+            samplerate = 41000,
+            blocksize = 0,
+            callback = self.callback,
+            )
 
-        self.active = False
+    active: bool = False
 
     def start(self) -> bool:
         super().start()
@@ -41,8 +41,9 @@ class AudioStream(Stream):
 
 # Instantiate the stream
 audio_stream = AudioStream()
+
 # Make switch to turn on or off the stream with spacebar
-while toggle := input("Press spacebar to toggle stream on or off: "):
+while toggle := input(f"Press <enter> to toggle stream {'on' if audio_stream.active else 'off'}\n"):
 
     try:
         match toggle:  # n.b. python@3.10 or higher

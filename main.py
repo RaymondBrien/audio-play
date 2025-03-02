@@ -79,3 +79,5 @@ def plot_pitch():
 stream = sd.InputStream(callback=callback, samplerate=44100, channels=1)
 with stream:
     plot_pitch()
+
+

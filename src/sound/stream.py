@@ -1,60 +1,98 @@
-from sounddevice import Stream
-from typing import Optional
 import numpy as np
+import curses
+
+from sounddevice import Stream
+
+
+DIVIDER: str = "\n------------------------------\n------------------------------\n"
+
 
 class AudioStream(Stream):
     """
     Stream class to stream live audio data once initialized from user
-    """
+        - NOTE: stdscr must be passed to AudioStream class to work.
+        def main(stdscr):
+            # Initialize the AudioStream with the stdscr object
+            audio_stream = AudioStream(stdscr)
+            audio_stream.toggle_stream()
 
-    # default values
-    def __init__(self):
+        # Start the curses application required for spacebar interaction
+        curses.wrapper(main)
+    """
+    def __init__(self, stdscr, samplerate=44100, channels=1, blocksize=0):
+        active: bool = self.active
+        self.stdscr = stdscr # user input in terminal
 
         # Initialise parent stream class
         super().__init__(
-            channels = 1,
-            samplerate = 41000,
-            blocksize = 0,
+            channels = channels,
+            samplerate = samplerate,
+            blocksize = blocksize,
             callback = self.callback,
             )
 
-    active: bool = False
-
     def start(self) -> bool:
+        """Start the audio stream"""
         super().start()
         self.active = True
         print("Stream started")
-        return True
+        return self.active
 
     def stop(self) -> bool:
+        """Stop the audio stream"""
         super().stop()
         self.active = False
         print("Stream stopped")
-        return True
+        return self.active
 
+    def callback(self, indata, outdata, frames, time, status):
+        """
+        Callback function from sounddevice which receives live audio data
 
-    def callback(self, indata, outdata, frames, time, status):  # TODO sort params
-        """Callback function which receives live audio data"""
+        Args:
+            - status (from sounddevice): when true returns self.active = True
+            - outdata which processes indata
+        """
         if status:
             print(status)
-        return indata[:, 0]
+            self.active
 
-# Instantiate the stream
-audio_stream = AudioStream()
+        # Process (and modify if needed) indata and write to outdata
+        outdata[:] = indata
 
-# Make switch to turn on or off the stream with spacebar
-while toggle := input(f"Press <enter> to toggle stream {'on' if audio_stream.active else 'off'}\n"):
+        # Or if you are only interested in the first channel:
+        # outdata[:, 0] = indata[:, 0]
 
-    try:
-        match toggle:  # n.b. python@3.10 or higher
-            case " ":  # toggle the stream on or off - TODO use poetry to choose python version
-                if audio_stream.active:
-                    audio_stream.stop()
-                    audio_stream.reset()
+
+    def toggle_stream(self):
+        """
+        Helper function to toggle the stream on and off with the spacebar
+            - anything other than spacebar will raise a value error
+            - this currently relies on curses library to listen for
+            keyboard inputs without the need to press enter.
+                - In the future this could be improved by making curses
+                stdscr optional, so that this class stil works without a UI.
+
+        stdscr will be cleared and status will be shown.
+        """
+        if not self.stdscr:
+            raise ValueError("No curses stdscr provided")
+
+        self.stdscr.clear()
+        self.stdscr.addstr(f"Press SPACEBAR to toggle stream {'OFF' if self.active else 'ON'}")
+        self.stdscr.refresh()
+
+        while True:
+            key = self.stdscr.getch()
+            if key == ord(' '):
+                if self.active:
+                    self.stdscr.addstr(f"{DIVIDER} + STREAM STOPPING" + DIVIDER)
+                    self.stdscr.refresh()
+                    return self.stop()
                 else:
-                    audio_stream.start()
-            case _:
-                raise ValueError("Please only use the spacebar")
-    except KeyboardInterrupt:
-        print("Stream stopped")
-        break
+                    self.stdscr.addstr(f"{DIVIDER} + STREAM STOPPING" + DIVIDER)
+                    self.stdscr.refresh()
+                    return self.start()
+            else:
+                self.stdscr.addstr("\nPleaseuse the SPACEBAR")
+                self.stdscr.refresh()

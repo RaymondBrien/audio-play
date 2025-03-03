@@ -18,6 +18,9 @@ class AudioStream(Stream):
 
         # Start the curses application required for spacebar interaction
         curses.wrapper(main)
+
+        TODO write tests for this class's individual functions to ensure
+        robust functionality before building futher.
     """
     def __init__(self, stdscr, samplerate=44100, channels=1, blocksize=0):
         active: bool = self.active

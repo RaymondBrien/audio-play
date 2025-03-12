@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from unittest.mock import Mock
 
-from src.sound.stream import Stream
+from src.sound.stream import AudioStream
 
 @pytest.mark.parametrize(
     "test_id, samplerate, channels, blocksize",
@@ -27,9 +27,9 @@ def test___init__(stdscr_mock, test_id, samplerate, channels, blocksize):
     # Act
     if expected_exception:
         with pytest.raises(expected_exception):
-            stream = Stream(stdscr=stdscr_mock, samplerate=samplerate, channels=channels, blocksize=blocksize)
+            stream = AudioStream(stdscr=stdscr_mock, samplerate=samplerate, channels=channels, blocksize=blocksize)
     else:
-        stream = Stream(stdscr=stdscr_mock, samplerate=samplerate, channels=channels, blocksize=blocksize)
+        stream = AudioStream(stdscr=stdscr_mock, samplerate=samplerate, channels=channels, blocksize=blocksize)
 
         # Assert
         assert stream.samplerate == samplerate

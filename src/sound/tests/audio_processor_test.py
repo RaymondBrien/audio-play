@@ -55,7 +55,7 @@ class Test_Audio_Processor_Class():
             assert isinstance(result, np.ndarray), "Expected a NumPy array"
             # confirm data expected dimensions
             assert result.shape == self.mock_recording.shape, "Expected same shape as mock data"
-            np.testing.assert_array_equal(result, self.mock_recording), "Expected same data in mock data and result data"
+            assert result == self.mock_recording, "Expected same data in mock data and result data"
 
 
     def test_play_audio_no_audio(self, mocker):

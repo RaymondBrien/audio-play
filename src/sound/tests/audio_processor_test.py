@@ -2,7 +2,13 @@ import pytest
 import asyncio
 import numpy as np
 
-from src.sound.audio_processor import AudioProcessor
+# from src.sound.audio_processor import AudioProcessor
+import sys
+import os
+
+# sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
+
+from sound.audio_processor import AudioProcessor  # Now import without `src`
 
 """
 - Unit tests for audio_processor.py
@@ -25,20 +31,20 @@ Test behavior first, then worry about inner workings:
 
 """
 
-class Test_Audio_Processor_Class():
+class Test_Audio_Processor_Class:
     @pytest.fixture(autouse=True)
     def setup_class(self):
-        try:
-            self.audio_processor = AudioProcessor()
-            print("Audio Processor instantiated successfully\n")
+        # try:
+        self.audio_processor = AudioProcessor()
+        print("Audio Processor instantiated successfully\n")
 
-            self.mock_recording = np.random.rand(48000, 1)  # 1s simulated audio data
-            yield
+        self.mock_recording = np.random.rand(48000, 1)  # 1s simulated audio data
+        yield
 
             # add teardown code here if required TODO
 
-        except Exception as e:
-            print(e.__class__)
+        # except Exception as e:
+        #     print(f"Error of type: {e.__class__}")
 
 
     def test_record_method(self, mocker):

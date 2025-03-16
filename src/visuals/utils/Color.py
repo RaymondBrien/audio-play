@@ -34,19 +34,13 @@ class Color:
 
     # TODO is a dict faster as made below?
     # default values
-    def __init__(
-        self,
-        hex: str,
-        transparency: float,
-        stack_position: int,
-        animation: list
-        ):
+    def __init__(self):
 
-        self.hex = '#000000'
-        self.transparency = 0.2
-        self.stack_position = 0
-        self.animate = False
-        self.animation = None
+        self.hex : str = '#000000'
+        self.transparency : float = 0.2
+        self.stack_position :int = 0
+        self.animate : bool = False
+        self.animation : list = []
 
         # TODO - use as dict?
         # default_values = {
@@ -57,7 +51,7 @@ class Color:
         #     'animation': self.animation
         # }
 
-    def update_hex_value(freq: int, hex: str) -> str:
+    def update_hex_value(self, freq: int, hex: str) -> str:
         """
         Update the hex value of the color.
 
